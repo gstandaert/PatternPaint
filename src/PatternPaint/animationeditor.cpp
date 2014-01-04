@@ -63,10 +63,13 @@ void AnimationEditor::init(int frameCount, int stripLength)
 
 void AnimationEditor::init(int frameCount, int stripLength, bool reset)
 {
+    // Get a reference to the original animation so we can draw it back after the resizing
     QImage originalAnimation = pattern;
 
+    // Do the resizing
     init(frameCount,stripLength);
 
+    // Draw back the animation, if necessary
     if(!reset) {
         QPainter painter(&pattern);
         painter.drawImage(0,0,originalAnimation);
