@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     animationeditor.cpp \
     colormodel.cpp \
     aboutpatternpaint.cpp \
-    resizeanimation.cpp
+    resizeanimation.cpp \
+    resizetape.cpp
 
 HEADERS  += mainwindow.h \
     blinkytape.h \
@@ -54,12 +55,14 @@ HEADERS  += mainwindow.h \
     ColorSwirl_Sketch.h \
     colormodel.h \
     aboutpatternpaint.h \
-    resizeanimation.h
+    resizeanimation.h \
+    resizetape.h
 
 FORMS    += mainwindow.ui \
     systeminformation.ui \
     aboutpatternpaint.ui \
-    resizeanimation.ui
+    resizeanimation.ui \
+    resizetape.ui
 
 # OS X icon (TODO: Try removing to make sure it has an effect)
 ICON = images/blinkytape.icns

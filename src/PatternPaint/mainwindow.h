@@ -70,6 +70,8 @@ private slots:
 
     void on_actionResize_Animation_triggered();
 
+    void on_actionResize_Tape_triggered();
+
 private:
     Ui::MainWindow *ui;
 

@@ -4,9 +4,6 @@
 #include <cmath>
 #include <QtWidgets>
 
-// TODO: Change this when we connect to a tape, etc?
-#define BLINKYTAPE_STRIP_HEIGHT 60
-
 AnimationEditor::AnimationEditor(QWidget *parent) :
     QWidget(parent)
 {
@@ -14,11 +11,13 @@ AnimationEditor::AnimationEditor(QWidget *parent) :
 
 void AnimationEditor::init(int frameCount, int stripLength)
 {
+    animationLength = frameCount;
+    ledCount = stripLength;
     xScale = 7;  // How big we want to make it
     yScale = 6;  // How big we want to make it
 
     // Make a color image as default
-    pattern = QImage(frameCount,stripLength,QImage::Format_RGB32);
+    pattern = QImage(animationLength,ledCount,QImage::Format_RGB32);
     pattern.fill(0);
 //    float phase = 0;
 //    for(int x = 0; x < pattern.width();x++) {
@@ -33,7 +32,7 @@ void AnimationEditor::init(int frameCount, int stripLength)
 //    }
 
     // And make a grid pattern to superimpose over the image
-    gridPattern = QImage(frameCount*xScale+1,stripLength*yScale+1,QImage::Format_ARGB32);
+    gridPattern = QImage(animationLength*xScale+1,ledCount*yScale+1,QImage::Format_ARGB32);
     gridPattern.fill(QColor(0,0,0,0));
 
     QPainter painter(&gridPattern);
@@ -46,7 +45,7 @@ void AnimationEditor::init(int frameCount, int stripLength)
         painter.drawLine(x*xScale-1,0,x*xScale-1,pattern.height()*yScale-1);
     }
 
-    toolPreview = QImage(frameCount,stripLength,QImage::Format_ARGB32);
+    toolPreview = QImage(animationLength,ledCount,QImage::Format_ARGB32);
     toolPreview.fill(QColor(0,0,0,0));
 
     toolColor = QColor(255,255,255);
@@ -62,16 +61,30 @@ void AnimationEditor::init(int frameCount, int stripLength)
     update();
 }
 
+void AnimationEditor::init(int frameCount, int stripLength, bool reset)
+{
+    QImage originalAnimation = pattern;
+
+    init(frameCount,stripLength);
+
+    if(!reset) {
+        QPainter painter(&pattern);
+        painter.drawImage(0,0,originalAnimation);
+    }
+
+    update();
+}
+
 bool AnimationEditor::init(QImage newPattern, bool scaled) {
     // TODO: Implement 'save' check before overwriting?
 
     // If the pattern doesn't fit, scale it.
     // TODO: Display an import dialog to let the user decide what to do?
-    if(scaled && newPattern.height() != BLINKYTAPE_STRIP_HEIGHT) {
-        newPattern = newPattern.scaledToHeight(BLINKYTAPE_STRIP_HEIGHT);
+    if(scaled && newPattern.height() != ledCount) {
+        newPattern = newPattern.scaledToHeight(ledCount);
     }
 
-    init(newPattern.width(),BLINKYTAPE_STRIP_HEIGHT);
+    init(newPattern.width(),newPattern.height());
 
     QPainter painter(&pattern);
     painter.drawImage(0,0,newPattern);

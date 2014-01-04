@@ -317,6 +317,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionResize_Animation"/>
+    <addaction name="actionResize_Tape"/>
     <addaction name="separator"/>
     <addaction name="actionFlip_Horizontal"/>
     <addaction name="actionFlip_Vertical"/>
@@ -425,6 +426,11 @@
   <action name="actionResize_Animation">
    <property name="text">
     <string>Resize Animation</string>
+   </property>
+  </action>
+  <action name="actionResize_Tape">
+   <property name="text">
+    <string>Resize Tape</string>
    </property>
   </action>
  </widget>

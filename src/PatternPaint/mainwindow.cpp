@@ -5,6 +5,7 @@
 #include "systeminformation.h"
 #include "aboutpatternpaint.h"
 #include "resizeanimation.h"
+#include "resizetape.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -44,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Now that our window is drawn, fix the vertical height so it can't be changed by the user
     // TODO: some sort of scaling instead of fixing this? A non-hack way of doing it?
-    setFixedHeight(height());
+    // setFixedHeight(height());
 
     // The draw timer tells the animation to advance
     drawTimer = new QTimer(this);
@@ -385,30 +386,47 @@ void MainWindow::on_actionSave_to_Tape_triggered()
 
 void MainWindow::on_actionResize_Animation_triggered()
 {
-    int animationLength = ui->animationEditor->getPattern().width();
+    int originalAnimationLength = ui->animationEditor->getPattern().width();
+    int originalLedCount = ui->animationEditor->getPattern().height();
 
     // TODO: Dispose of this?
     ResizeAnimation* resizer = new ResizeAnimation(this);
     resizer->setWindowModality(Qt::WindowModal);
-    resizer->setLength(animationLength);
+    resizer->setLength(originalAnimationLength);
     resizer->exec();
 
     if(resizer->result() != QDialog::Accepted) {
         return;
     }
 
-    int newLength = resizer->length();
-    if(newLength > 0) {
-        qDebug() << "Resizing Animation to length: " << resizer->length();
+    int newAnimationLength = resizer->length();
+    if(newAnimationLength > 0) {
+        qDebug() << "Resizing Animation to length: " << newAnimationLength;
         // TODO: This in a non-hacky way
-        QImage originalAnimation = ui->animationEditor->getPattern();
-        QImage newAnimation(newLength, originalAnimation.height(),QImage::Format_RGB32);
 
-        newAnimation.fill(QColor(0,0,0,0));
+        ui->animationEditor->init(newAnimationLength,originalLedCount,false);
+    }
+}
 
-        QPainter painter(&newAnimation);
-        painter.drawImage(0,0,originalAnimation);
+void MainWindow::on_actionResize_Tape_triggered()
+{
+    int originalAnimationLength = ui->animationEditor->getPattern().width();
+    int originalLedCount = ui->animationEditor->getPattern().height();
 
-        ui->animationEditor->init(newAnimation);
+    // TODO: Dispose of this?
+    ResizeTape* resizer = new ResizeTape(this);
+    resizer->setWindowModality(Qt::WindowModal);
+    resizer->setSize(originalLedCount);
+    resizer->exec();
+
+    if(resizer->result() != QDialog::Accepted) {
+        return;
+    }
+
+    int newLedCount = resizer->size();
+    if(newLedCount > 0) {
+        qDebug() << "Resizing Tape to size: " << newLedCount;
+
+        ui->animationEditor->init(originalAnimationLength,newLedCount,false);
     }
 }
